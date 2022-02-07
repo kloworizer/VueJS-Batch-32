@@ -1,0 +1,2 @@
+-membuat website dengan wordpress dan php
+-membuat program kecil dengan python
