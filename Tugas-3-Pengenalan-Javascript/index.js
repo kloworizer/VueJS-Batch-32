@@ -2,7 +2,7 @@
 var pertama = "saya sangat senang hari ini";
 var kedua = "belajar javascript itu keren";
 
-console.log(pertama.split(" ")[0] + " " + pertama.split(" ")[2] + " " + kedua.split(" ")[0] + " " + kedua.split(" ")[1].toUpperCase());
+console.log(pertama.substring(0, 4) + " " + pertama.substring(12, 18) + " " + kedua.substring(0, 7) + " " + kedua.substring(8, 18).toUpperCase());
 
 // soal 2
 var kataPertama = "10";
