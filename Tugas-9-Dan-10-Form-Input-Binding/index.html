@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="app">
+      <input type="text" v-model="kataKunci" placeholder="ketik kata kunci" />
+      <ul>
+        <li v-for="item in booksFilter" :key="item">{{item}}</li>
+      </ul>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script>
+      var vm = new Vue({
+        el: "#app",
+        data: {
+          kataKunci: "",
+          books: [
+            "Kalkulus Dasar",
+            "Fisika Dasar",
+            "Aljabar Linier Elementer",
+            "Aljabar Abstrak",
+            "Algoritma Pemrograman",
+          ],
+        },
+        computed: {
+          booksFilter() {
+            if (this.kataKunci === "") {
+              return this.books;
+            } else {
+              return this.books.filter(
+                (i) =>
+                  i.toLowerCase().indexOf(this.kataKunci.toLowerCase()) >= 0
+              );
+            }
+          },
+        },
+      });
+    </script>
+  </body>
+</html>
