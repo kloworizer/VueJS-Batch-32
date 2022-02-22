@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tugas 12</title>
+</head>
+
+<body style="text-align: center; margin-top: 50px; padding: 10px 30% 0px 30%;">
+  <div id="app">
+    <div style="margin-bottom: 30px; text-align: left;">
+      <div v-if="this.errors.length > 0">
+        <ul style="text-align: left;">
+          <li v-for="error in errors">{{ error }}</li>
+        </ul>
+      </div>
+      <form v-on:submit.prevent="submitForm">
+        <div>nama : <input type="text" v-model="name" :disabled="buttonStatus == 'upload'" /></div>
+        <div>alamat : <input type="text" v-model="address" :disabled="buttonStatus == 'upload'" /></div>
+        <div>nomor hp : <input type="text" v-model="no_hp" :disabled="buttonStatus == 'upload'" /></div>
+
+        <div v-if="buttonStatus == 'submit'" style="margin-top: 5px;">
+          <button type="button" @click="submitForm">Kirim</button>
+        </div>
+        <div v-else-if="buttonStatus == 'update'" style="margin-top: 5px;">
+          <button type="button" @click="updateMember(idEditMember)">Update</button>
+          <button type="button" @click="clearForm">Batal</button>
+        </div>
+        <div v-else-if="buttonStatus == 'upload'" style="margin-top: 5px;">
+          <input type="file" name="photo" ref="photo">
+          <button type="button" @click="uploadPhoto(idUploadMember)">Upload</button>
+          <button type="button" @click="clearForm">Batal</button>
+        </div>
+      </form>
+    </div>
+
+    <div v-for="member of members" style="margin-bottom: 15px; background-color:honeydew; padding: 15px;">
+      <img :src="member.photo_profile ? photoDomain + member.photo_profile : 'https://dummyimage.com/4:3x200'"
+        :alt="member.name" width="200">
+      <h2>{{ member.name }}</h2>
+      <p>Alamat : {{ member.address }}</p>
+      <p>HP : {{ member.no_hp }}</p>
+      <button @click="editMember(member)">Edit</button>
+      <button @click="deleteMember(member.id)">Hapus</button>
+      <button @click="uploadMember(member)">Upload Foto</button>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script>
+    var vm = new Vue({
+      el: "#app",
+      data: {
+        name: "",
+        address: "",
+        no_hp: "",
+        errors: [],
+        members: [],
+        photoDomain: "http://demo-api-vue.sanbercloud.com",
+        buttonStatus: "submit",
+        idEditMember: null,
+        idUploadMember: null
+      },
+      methods: {
+        getMembers: function () {
+
+          const config = {
+            method: "get",
+            url: "http://demo-api-vue.sanbercloud.com/api/member"
+          }
+
+          axios(config)
+            .then((response) => {
+              this.members = response.data.members;
+            })
+            .catch((error) => {
+              this.errors = error;
+            })
+
+          this.clearForm();
+        },
+        validationForm: function () {
+          this.errors = []
+
+          if (this.name.length === 0) {
+            this.errors.push("Nama tidak boleh kosong")
+          }
+          if (this.address.length === 0) {
+            this.errors.push("Alamat tidak boleh kosong")
+          }
+          if (this.no_hp.length === 0) {
+            this.errors.push("Nomor handphone tidak boleh kosong")
+          }
+        },
+        submitForm: function () {
+          this.validationForm();
+          if (this.errors.length === 0) {
+            let formData = new FormData();
+            formData.append('name', this.name);
+            formData.append('address', this.address);
+            formData.append('no_hp', this.no_hp);
+
+            const config = {
+              method: "post",
+              url: "http://demo-api-vue.sanbercloud.com/api/member",
+              data: formData
+            }
+
+            axios(config)
+              .then((response) => {
+                alert(response.data.message);
+                this.getMembers();
+              })
+              .catch((error) => {
+                this.errors = error;
+              })
+          }
+        },
+        deleteMember: function (id) {
+          const config = {
+            method: "post",
+            url: `http://demo-api-vue.sanbercloud.com/api/member/${id}`,
+            params: { _method: "DELETE" }
+          }
+          axios(config)
+            .then((response) => {
+              alert(response.data.message);
+              this.getMembers();
+            })
+            .catch((error) => {
+              this.errors = error;
+            })
+        },
+        editMember: function (member) {
+          this.name = member.name;
+          this.address = member.address;
+          this.no_hp = member.no_hp;
+          this.buttonStatus = 'update';
+          this.idEditMember = member.id;
+        },
+        clearForm: function () {
+          this.errors = [];
+          this.name = this.address = this.no_hp = "";
+          this.idEditMember = null;
+          this.idUploadMember = null;
+          this.buttonStatus = 'submit';
+        },
+        updateMember: function (id) {
+          this.validationForm();
+          if (this.errors.length === 0) {
+            let formData = new FormData();
+            formData.append('name', this.name);
+            formData.append('address', this.address);
+            formData.append('no_hp', this.no_hp);
+
+            const config = {
+              method: "post",
+              url: `http://demo-api-vue.sanbercloud.com/api/member/${id}`,
+              params: { _method: "PUT" },
+              data: formData
+            }
+
+            axios(config)
+              .then((response) => {
+                alert(response.data.message);
+                this.getMembers();
+              })
+              .catch((error) => {
+                this.errors = error;
+              })
+          }
+        },
+        uploadMember: function (member) {
+          this.name = member.name;
+          this.address = member.address;
+          this.no_hp = member.no_hp;
+          this.buttonStatus = 'upload';
+          this.idUploadMember = member.id;
+        },
+        uploadPhoto: function (id) {
+          let file = this.$refs.photo.files[0];
+          let formData = new FormData();
+          formData.append('photo_profile', file);
+
+          const config = {
+              method: "post",
+              url: `http://demo-api-vue.sanbercloud.com/api/member/${id}/upload-photo-profile`,
+              data: formData
+            }
+
+            axios(config)
+              .then((response) => {
+                alert(response.data.message);
+                this.getMembers();
+              })
+              .catch((error) => {
+                this.errors = error;
+              })
+
+        }
+      },
+      created() {
+        this.getMembers();
+      }
+    });
+  </script>
+</body>
+
+</html>
