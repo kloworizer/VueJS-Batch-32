@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>tugas 14</title>
+</head>
+
+<body>
+    <div id="app">
+        <h1>Tugas 14 Vue Router</h1>
+        <router-link to="/halaman1">Halaman 1</router-link>
+        <router-link to="/halaman2">Halaman 2</router-link>
+        <router-link to="/halaman3">Halaman 3</router-link>
+
+        <hr />
+        <router-view></router-view>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-router@3/dist/vue-router.js"></script>
+
+    <script type="module">
+        import { component1 } from "./component1.js";
+        import { component2 } from "./component2.js";
+        import { component3 } from "./component3.js";
+
+        let user = { login: false, role: null };
+
+        const routes = [
+            { path: "/halaman1", component: component1, alias: "/" },
+            { path: "/halaman2", component: component2, meta: { login: true } },
+            { path: "/halaman3", component: component3, meta: { login: true, role: 'admin' } },
+        ];
+
+        const router = new VueRouter({
+            routes,
+        });
+
+        router.beforeEach((to, from, next) => {
+            if (to.matched.some(record => record.meta.login)) {
+                if (!user.login) {
+                    alert('Anda belum login')
+                    next(false)
+                } else {
+                    next()
+                }
+            } else if (to.matched.some(record => record.meta.admin)) {
+                if (user.login && user.role === 'admin') {
+                    next()
+                } else {
+                    alert('Menu khusus admin')
+                    next(false)
+                }
+            } else {
+                next()
+            }
+        });
+
+        var vm = new Vue({
+            el: "#app",
+            router,
+        });
+    </script>
+</body>
+
+</html>
