@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="app"><p>{{b}}</p></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script>
+      var template = `<div><h1>{{'Pesan: ' + message}}</h1>
+             <h2>- {{author }} -</h2></div>`;
+      var vm = new Vue({
+        el: "#app",
+        data: {
+          a: 1,
+        },
+        computed:{
+            b : function(){
+                return this.a + 2;
+            }
+        }
+      });
+    </script>
+  </body>
+</html>

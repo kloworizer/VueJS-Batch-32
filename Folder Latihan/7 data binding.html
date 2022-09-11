@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="app">
+      <input type="text" v-bind:value="message">
+      <p>{{message}}</p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script>
+      var template = `<div><h1>{{'Pesan: ' + message}}</h1>
+             <h2>- {{author }} -</h2></div>`;
+      var vm = new Vue({
+        el: "#app",
+        data: {
+          message: "Jangan lupa zakat",
+        },
+      });
+    </script>
+  </body>
+</html>
